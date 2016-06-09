@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/JonuMQ.iml" filepath="$PROJECT_DIR$/JonuMQ.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JonuMQ-Broker/JonuMQ-Broker.iml" filepath="$PROJECT_DIR$/JonuMQ-Broker/JonuMQ-Broker.iml" />
     </modules>
   </component>
 </project>
