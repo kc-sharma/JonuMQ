@@ -9,6 +9,9 @@
  */
 package org.jonu.jonumq.transport;
 
+import org.jonu.jonumq.JonuMQTextMessage;
+import org.jonu.jonumq.producer.JonuMQProducer;
+
 import javax.jms.*;
 import java.io.Serializable;
 
@@ -64,7 +67,7 @@ public class JonuMQSession implements Session
     @Override
     public TextMessage createTextMessage(String s) throws JMSException
     {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        return new JonuMQTextMessage();
     }
 
     @Override
@@ -124,7 +127,7 @@ public class JonuMQSession implements Session
     @Override
     public MessageProducer createProducer(Destination destination) throws JMSException
     {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        return new JonuMQProducer();
     }
 
     @Override

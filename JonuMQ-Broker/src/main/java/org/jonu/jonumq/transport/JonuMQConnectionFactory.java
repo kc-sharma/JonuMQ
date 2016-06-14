@@ -39,14 +39,12 @@ public class JonuMQConnectionFactory implements ConnectionFactory
     @Override
     public Connection createConnection() throws JMSException
     {
-        JonuMQConnection jonuMQConnection = null;
-        jonuMQConnection = createJonuMQConnection();
-        return jonuMQConnection;
+        return createJonuMQConnection();
     }
 
     private JonuMQConnection createJonuMQConnection()
     {
-        return null;  //$REVIEW$ To change body of created methods use File | Settings | File Templates.
+        return new JonuMQConnection();
     }
 
     @Override

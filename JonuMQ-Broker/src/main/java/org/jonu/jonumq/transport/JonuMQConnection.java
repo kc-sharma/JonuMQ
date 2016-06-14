@@ -12,6 +12,10 @@ import javax.jms.*;
  */
 public class JonuMQConnection implements Connection
 {
+    public JonuMQConnection()
+    {
+
+    }
 
     @Override
     public Session createSession(boolean b, int i) throws JMSException

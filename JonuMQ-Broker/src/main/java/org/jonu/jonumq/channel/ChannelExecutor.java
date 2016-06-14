@@ -36,7 +36,7 @@ public class ChannelExecutor
         return channels.get(channelName);
     }
 
-    public void addChannel(String channelName)
+    public void addNewChannel(String channelName)
     {
         checkIfChannelAlreadyExist(channelName);
         channels.put(channelName, new Channel());

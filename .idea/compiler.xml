@@ -23,6 +23,7 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="JonuMQ-Broker" />
+        <module name="JonuMQ-Client" />
         <module name="JonuMQ-Transport" />
       </profile>
     </annotationProcessing>

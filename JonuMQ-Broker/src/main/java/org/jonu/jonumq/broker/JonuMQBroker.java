@@ -1,7 +1,8 @@
-
 package org.jonu.jonumq.broker;
 
 import org.jonu.jonumq.channel.ChannelExecutor;
+
+import java.io.IOException;
 
 /**
  * @author prabhato
@@ -12,16 +13,28 @@ public class JonuMQBroker
 {
 
     private static JonuMQBroker jonuMQBroker = null;
-    private ChannelExecutor channelExecutor;
+    private static ChannelExecutor channelExecutor = null;
+    private static String host;
+    private static int port;
 
     private JonuMQBroker()
     {
 
     }
 
-    private void igniteBroker()
+    private JonuMQBroker(String host, int port)
     {
-        jonuMQBroker = new JonuMQBroker();
+        this.host = host;
+        this.port = port;
+    }
+
+
+    public static void igniteBroker(String host, int port) throws Exception
+    {
+        if (jonuMQBroker != null || channelExecutor != null) {
+            throw new Exception("Broker Already ignited");
+        }
+        jonuMQBroker = new JonuMQBroker(host, port);
         channelExecutor = ChannelExecutor.getChannelExecutor();
     }
 
@@ -36,5 +49,21 @@ public class JonuMQBroker
     public void shutDownBroker()
     {
         jonuMQBroker = null;
+    }
+
+    static Thread server;
+    public static void start()
+    {
+        try {
+            server = new Server(host,port);
+            server.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void stop() throws InterruptedException
+    {
+        server.join();
     }
 }
