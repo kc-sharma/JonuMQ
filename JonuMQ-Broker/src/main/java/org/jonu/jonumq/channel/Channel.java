@@ -1,6 +1,6 @@
-
 package org.jonu.jonumq.channel;
 
+import org.jonu.jonumq.JonuMQMessage;
 import org.jonu.jonumq.JonuMQTextMessage;
 
 import java.util.ArrayList;
@@ -13,22 +13,22 @@ import java.util.List;
  */
 public class Channel
 {
-    private List<JonuMQTextMessage> listOfJonuMQTextMessages;
+    private List<JonuMQMessage> listOfMessages;
     private int messageCount;
 
     public Channel()
     {
-        this.listOfJonuMQTextMessages = new ArrayList<JonuMQTextMessage>();
+        this.listOfMessages = new ArrayList<JonuMQMessage>();
     }
 
-    public List<JonuMQTextMessage> getListOfJonuMQTextMessages()
+    public List<JonuMQMessage> getListOfMessages()
     {
-        return listOfJonuMQTextMessages;
+        return listOfMessages;
     }
 
-    public void setListOfJonuMQTextMessages(List<JonuMQTextMessage> listOfJonuMQTextMessages)
+    public void setListOfMessages(List<JonuMQMessage> listOfMessages)
     {
-        this.listOfJonuMQTextMessages = listOfJonuMQTextMessages;
+        this.listOfMessages = listOfMessages;
     }
 
     public void addMessage(JonuMQTextMessage jonuMQTextMessage)
@@ -36,15 +36,15 @@ public class Channel
         if (jonuMQTextMessage == null) {
             throw new NullPointerException("Message object can't be null");
         }
-        this.listOfJonuMQTextMessages.add(messageCount, jonuMQTextMessage);
+        this.listOfMessages.add(messageCount, jonuMQTextMessage);
         messageCount++;
     }
 
-    public JonuMQTextMessage getFirstMessage()
+    public JonuMQMessage getFirstMessage()
     {
-        if (!listOfJonuMQTextMessages.isEmpty()) {
+        if (!listOfMessages.isEmpty()) {
             messageCount--;
-            return listOfJonuMQTextMessages.remove(0);
+            return listOfMessages.remove(0);
         }
 
         return null;

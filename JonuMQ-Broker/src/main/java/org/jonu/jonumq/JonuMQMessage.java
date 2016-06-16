@@ -3,313 +3,93 @@
  */
 package org.jonu.jonumq;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import java.util.Enumeration;
-
 /**
  * @author prabhato
  * @version $Revision$, $Date$, $Author$
  * @since 6/14/2016
  */
-public class JonuMQMessage implements Message
+public class JonuMQMessage
 {
-
+    String destination;
     String messageId;
-    long jmsTimeStamp;
+    long messageCreationTime;
+    long messageInTime;
+    long messageOutTime;
+    boolean persistent;
+    ByteMessage message;
 
-    @Override
-    public String getJMSMessageID() throws JMSException
+    public boolean isPersistent()
+    {
+        return persistent;
+    }
+
+    public void setPersistent(boolean persistent)
+    {
+        this.persistent = persistent;
+    }
+
+    public long getMessageOutTime()
+    {
+        return messageOutTime;
+    }
+
+    public void setMessageOutTime(long messageOutTime)
+    {
+        this.messageOutTime = messageOutTime;
+    }
+
+    public long getMessageInTime()
+    {
+        return messageInTime;
+    }
+
+    public void setMessageInTime(long messageInTime)
+    {
+        this.messageInTime = messageInTime;
+    }
+
+    public long getMessageCreationTime()
+    {
+        return messageCreationTime;
+    }
+
+    public void setMessageCreationTime(long messageCreationTime)
+    {
+        this.messageCreationTime = messageCreationTime;
+    }
+
+    public String getMessageId()
     {
         return messageId;
     }
 
-    @Override
-    public void setJMSMessageID(String s) throws JMSException
+    public void setMessageId(String messageId)
     {
-        this.messageId = s;
+        this.messageId = messageId;
     }
 
-    @Override
-    public long getJMSTimestamp() throws JMSException
+    public JonuMQMessage()
     {
-        return jmsTimeStamp;
+
     }
 
-    @Override
-    public void setJMSTimestamp(long l) throws JMSException
+    public void setMessage(ByteMessage message)
     {
-        this.jmsTimeStamp = l;
+        this.message = message;
     }
 
-    @Override
-    public byte[] getJMSCorrelationIDAsBytes() throws JMSException
+    public String getDestination()
     {
-        return new byte[0];  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        return destination;
     }
 
-    @Override
-    public void setJMSCorrelationIDAsBytes(byte[] bytes) throws JMSException
+    public void setDestination(String destination)
     {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        this.destination = destination;
     }
 
-    @Override
-    public void setJMSCorrelationID(String s) throws JMSException
+    public ByteMessage getMessage()
     {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public String getJMSCorrelationID() throws JMSException
-    {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Destination getJMSReplyTo() throws JMSException
-    {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setJMSReplyTo(Destination destination) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Destination getJMSDestination() throws JMSException
-    {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setJMSDestination(Destination destination) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public int getJMSDeliveryMode() throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setJMSDeliveryMode(int i) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public boolean getJMSRedelivered() throws JMSException
-    {
-        return false;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setJMSRedelivered(boolean b) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public String getJMSType() throws JMSException
-    {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setJMSType(String s) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public long getJMSExpiration() throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setJMSExpiration(long l) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public long getJMSDeliveryTime() throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setJMSDeliveryTime(long l) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public int getJMSPriority() throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setJMSPriority(int i) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void clearProperties() throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public boolean propertyExists(String s) throws JMSException
-    {
-        return false;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public boolean getBooleanProperty(String s) throws JMSException
-    {
-        return false;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public byte getByteProperty(String s) throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public short getShortProperty(String s) throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public int getIntProperty(String s) throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public long getLongProperty(String s) throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public float getFloatProperty(String s) throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public double getDoubleProperty(String s) throws JMSException
-    {
-        return 0;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public String getStringProperty(String s) throws JMSException
-    {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Object getObjectProperty(String s) throws JMSException
-    {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Enumeration getPropertyNames() throws JMSException
-    {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setBooleanProperty(String s, boolean b) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setByteProperty(String s, byte b) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setShortProperty(String s, short i) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setIntProperty(String s, int i) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setLongProperty(String s, long l) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setFloatProperty(String s, float v) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setDoubleProperty(String s, double v) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setStringProperty(String s, String s2) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setObjectProperty(String s, Object o) throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void acknowledge() throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void clearBody() throws JMSException
-    {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public <T> T getBody(Class<T> tClass) throws JMSException
-    {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public boolean isBodyAssignableTo(Class aClass) throws JMSException
-    {
-        return false;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        return message;
     }
 }

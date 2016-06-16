@@ -51,19 +51,20 @@ public class JonuMQBroker
         jonuMQBroker = null;
     }
 
-    static Thread server;
+    static Server server;
+
     public static void start()
     {
         try {
-            server = new Server(host,port);
-            server.start();
+            server = new Server(host, port);
+            server.start(channelExecutor);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void stop() throws InterruptedException
+    public static void stop()
     {
-        server.join();
+        server.setBrokerRunning(false);
     }
 }

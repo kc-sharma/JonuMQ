@@ -1,4 +1,3 @@
-
 package org.jonu.jonumq.channel;
 
 import org.jonu.jonumq.exception.DuplicateChannelException;

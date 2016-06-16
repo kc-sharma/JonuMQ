@@ -3,7 +3,9 @@
  */
 package org.jonu.jonumq.marshaller;
 
-import java.io.DataInput;
+import org.jonu.jonumq.exception.UnknownMessageTypeException;
+
+import java.nio.ByteBuffer;
 
 /**
  * @author prabhato
@@ -12,8 +14,21 @@ import java.io.DataInput;
  */
 public class JonuMQMarshallerResolver
 {
-    public JonuMQMarshaller resolveMarshaller(DataInput in)
+    JonuMQMarshaller[] marshallers = new JonuMQMarshaller[10];
+
+    public JonuMQMarshallerResolver()
     {
+        marshallers[0] = new JonuMQTextMessageMarshaller();
+    }
+
+    public JonuMQMarshaller resolve(ByteBuffer in)
+    {
+        JonuMQMarshaller marshaller = null;
+        try {
+            marshaller = marshallers[in.getShort()];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new UnknownMessageTypeException("Message Type Is Unknown");
+        }
         return null;
     }
 }

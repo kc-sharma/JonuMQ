@@ -13,6 +13,7 @@ import javax.jms.*;
 public class JonuMQProducer implements MessageProducer
 {
     int deliveryMode;
+
     @Override
     public void setDisableMessageID(boolean b) throws JMSException
     {

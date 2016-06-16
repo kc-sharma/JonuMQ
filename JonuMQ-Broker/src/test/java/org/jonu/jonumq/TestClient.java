@@ -3,6 +3,7 @@
  */
 package org.jonu.jonumq;
 
+import org.jonu.jonumq.broker.JonuMQBroker;
 import org.jonu.jonumq.transport.JonuMQConnectionFactory;
 import org.junit.Test;
 
@@ -15,6 +16,20 @@ import javax.jms.*;
  */
 public class TestClient
 {
+    @Test
+    public void igniteBroker()
+    {
+        try {
+
+            JonuMQBroker.igniteBroker("localhost", 2056);
+            JonuMQBroker.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+
+    }
+
     @Test
     public void TestMe()
     {
