@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/JonuMQ-Broker/JonuMQ-Broker.iml" filepath="$PROJECT_DIR$/JonuMQ-Broker/JonuMQ-Broker.iml" />
       <module fileurl="file://$PROJECT_DIR$/JonuMQ-Client/JonuMQ-Client.iml" filepath="$PROJECT_DIR$/JonuMQ-Client/JonuMQ-Client.iml" />
       <module fileurl="file://$PROJECT_DIR$/JonuMQ-Transport/JonuMQ-Transport.iml" filepath="$PROJECT_DIR$/JonuMQ-Transport/JonuMQ-Transport.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Test/Test.iml" filepath="$PROJECT_DIR$/Test/Test.iml" />
     </modules>
   </component>
 </project>

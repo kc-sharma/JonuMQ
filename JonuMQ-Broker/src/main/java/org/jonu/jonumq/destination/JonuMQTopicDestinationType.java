@@ -4,6 +4,7 @@
 package org.jonu.jonumq.destination;
 
 import org.jonu.jonumq.channel.Channel;
+import org.jonu.jonumq.channel.ChannelExecutor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -14,16 +15,16 @@ import java.io.IOException;
  * @version $Revision$, $Date$, $Author$
  * @since 6/16/2016
  */
-public class JonuMQTopicDestination implements JonuMQDestination
+public class JonuMQTopicDestinationType implements JonuMQDestinationType
 {
     @Override
-    public void consume(DataInput in, DataOutput out, Channel channel) throws IOException
+    public void consume(DataInput in, DataOutput out, ChannelExecutor executor) throws IOException
     {
 
     }
 
     @Override
-    public void produce(DataInput in, DataOutput out, Channel channel) throws IOException
+    public void produce(DataInput in, DataOutput out, ChannelExecutor executor) throws IOException
     {
 
     }

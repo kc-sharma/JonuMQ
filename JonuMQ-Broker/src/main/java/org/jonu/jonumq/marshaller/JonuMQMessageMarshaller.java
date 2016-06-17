@@ -3,7 +3,7 @@
  */
 package org.jonu.jonumq.marshaller;
 
-import org.jonu.jonumq.JonuMQMessage;
+import org.jonu.jonumq.JonuMQMessageWrapper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -16,13 +16,13 @@ import java.io.DataOutput;
 public class JonuMQMessageMarshaller implements JonuMQMarshaller
 {
     @Override
-    public void marshall(JonuMQMessage message, DataOutput out)
+    public void marshall(JonuMQMessageWrapper message, DataOutput out)
     {
 
     }
 
     @Override
-    public void unmarshall(JonuMQMessage message, DataInput in)
+    public void unmarshall(JonuMQMessageWrapper message, DataInput in)
     {
 
     }

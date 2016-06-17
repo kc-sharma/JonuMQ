@@ -13,6 +13,14 @@ import java.io.IOException;
  */
 public class ClientTypeResolver
 {
+    static ClientTypeHandler[] handlers;
+
+    static {
+        handlers = new ClientTypeHandler[3];
+        handlers[1] = new ConsumerClientTypeHandler();
+        handlers[2] = new ProducerClientTypeHandler();
+    }
+
     public static ClientTypeHandler resolve(DataInput in) throws IOException
     {
         short value = in.readShort();
@@ -21,14 +29,10 @@ public class ClientTypeResolver
             throw new NullPointerException("Consumer type is not defined");
         }
 
-        switch (value) {
-            case 1:
-                return new ConsumerClientTypeHandler();
-            case 2:
-                return new ProducerClientTypeHandler();
-
-            default:
-                return null;
+        try {
+            return handlers[value];
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Unknown Client Type Handler");
         }
 
     }

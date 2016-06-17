@@ -12,6 +12,7 @@
         <module>JonuMQ-Broker</module>
         <module>JonuMQ-Transport</module>
         <module>JonuMQ-Client</module>
+        <module>Test</module>
     </modules>
 
     <dependencies>

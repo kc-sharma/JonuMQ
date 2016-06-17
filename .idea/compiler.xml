@@ -25,6 +25,7 @@
         <module name="JonuMQ-Broker" />
         <module name="JonuMQ-Client" />
         <module name="JonuMQ-Transport" />
+        <module name="Test" />
       </profile>
     </annotationProcessing>
   </component>

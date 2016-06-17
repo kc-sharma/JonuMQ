@@ -3,8 +3,6 @@
  */
 package org.jonu.jonumq;
 
-import javax.jms.BytesMessage;
-
 /**
  * @author prabhato
  * @version $Revision$, $Date$, $Author$
@@ -12,5 +10,21 @@ import javax.jms.BytesMessage;
  */
 public class ByteMessage
 {
+    byte[] bytes;
+
+    public ByteMessage()
+    {
+
+    }
+
+    public byte[] getBytes()
+    {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes)
+    {
+        this.bytes = bytes;
+    }
 
 }

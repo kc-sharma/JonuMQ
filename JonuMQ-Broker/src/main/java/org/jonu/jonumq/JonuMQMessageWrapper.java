@@ -3,12 +3,14 @@
  */
 package org.jonu.jonumq;
 
+import java.io.Serializable;
+
 /**
  * @author prabhato
  * @version $Revision$, $Date$, $Author$
  * @since 6/14/2016
  */
-public class JonuMQMessage
+public class JonuMQMessageWrapper implements Serializable
 {
     String destination;
     String messageId;
@@ -17,6 +19,11 @@ public class JonuMQMessage
     long messageOutTime;
     boolean persistent;
     ByteMessage message;
+
+    public JonuMQMessageWrapper()
+    {
+
+    }
 
     public boolean isPersistent()
     {
@@ -66,11 +73,6 @@ public class JonuMQMessage
     public void setMessageId(String messageId)
     {
         this.messageId = messageId;
-    }
-
-    public JonuMQMessage()
-    {
-
     }
 
     public void setMessage(ByteMessage message)

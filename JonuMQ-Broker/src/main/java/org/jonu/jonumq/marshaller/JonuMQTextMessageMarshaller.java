@@ -3,9 +3,8 @@
  */
 package org.jonu.jonumq.marshaller;
 
-import org.jonu.jonumq.JonuMQTextMessage;
+import org.jonu.jonumq.JonuMQMessageWrapper;
 
-import javax.jms.JMSException;
 import java.io.DataInput;
 import java.io.DataOutput;
 
@@ -16,18 +15,13 @@ import java.io.DataOutput;
  */
 public class JonuMQTextMessageMarshaller extends JonuMQMessageMarshaller implements JonuMQMarshaller
 {
-    public void marshall(JonuMQTextMessage message, DataOutput out)
+    public void marshall(JonuMQMessageWrapper message, DataOutput out)
     {
         super.marshall(message, out);
     }
 
-    public void unmarshall(JonuMQTextMessage message, DataInput in) throws JMSException
+    public void unmarshall(JonuMQMessageWrapper message, DataInput in)
     {
-        super.unmarshall(message, in);
 
-        StringBuilder msg = new StringBuilder();
-        msg.append("Hello Message");
-        //TODO write unmarshalling code from IN stream to Message
-        message.setText(msg.toString());
     }
 }

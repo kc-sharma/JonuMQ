@@ -35,8 +35,6 @@ public class ClientHandler extends Thread
         try {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            //ObjectInputStream ina = new ObjectInputStream(socket.getInputStream());
-            // think if we should implement ObjectInputStream or DataInput
             doProcess(in, out);
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,16 +49,17 @@ public class ClientHandler extends Thread
             if (!Server.isBrokerRunning()) {
                 throw new BrokerStoppedException("Broker was stopped, stopping all work");
             }
-            // start Processing if we receive any data on input channel
+            // start Processing if we receive any data on inputput stream
             if (checkIfAnyBytesReceived(in)) {
                 ClientTypeHandler client = null;
                 try {
                     client = ClientTypeResolver.resolve(in);
-                    client.doProcess(in, out);
+                    client.doProcess(in, out, executor);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
-
             }
         }
     }

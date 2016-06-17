@@ -1,9 +1,11 @@
 package org.jonu.jonumq.channel;
 
+import org.jonu.jonumq.consumer.MessageConsumption;
 import org.jonu.jonumq.exception.DuplicateChannelException;
 import org.jonu.jonumq.exception.UnknownDefinedChannel;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author prabhato
@@ -15,7 +17,7 @@ public class ChannelExecutor
 
     private static ChannelExecutor channelExecutor = new ChannelExecutor();
 
-    static HashMap<String, Channel> channels;
+    static Map<String, Channel> channels;
 
     private ChannelExecutor()
     {
@@ -32,13 +34,22 @@ public class ChannelExecutor
         if (channelName != null || channelName.isEmpty()) {
             throw new UnknownDefinedChannel("Channel Name can't be null or empty");
         }
-        return channels.get(channelName);
+        if (channels.containsKey(channelName)) {
+            return channels.get(channelName);
+        } else {
+            return null;
+        }
     }
 
-    public void addNewChannel(String channelName)
+    public Channel addNewChannel(String channelName)
     {
         checkIfChannelAlreadyExist(channelName);
-        channels.put(channelName, new Channel());
+        Channel channel = new Channel();
+
+        startMessageConsumption(channel);
+
+        channels.put(channelName, channel);
+        return channel;
     }
 
     private void checkIfChannelAlreadyExist(String channelName)
@@ -46,5 +57,11 @@ public class ChannelExecutor
         if (channels.containsKey(channelName)) {
             throw new DuplicateChannelException("Channel Already exist with the name " + channelName);
         }
+    }
+
+    private void startMessageConsumption(Channel channel)
+    {
+        Thread consume = new MessageConsumption(channel);
+        consume.start();
     }
 }

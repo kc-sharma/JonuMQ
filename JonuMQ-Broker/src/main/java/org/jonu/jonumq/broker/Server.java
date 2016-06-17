@@ -34,7 +34,7 @@ public class Server
     {
         this();
         serverSocket = new ServerSocket(port);
-        serverSocket.setSoTimeout(10000);
+        serverSocket.setSoTimeout(0000);
     }
 
     public void start(ChannelExecutor executor)
@@ -45,14 +45,12 @@ public class Server
                 break;
             }
             try {
-                System.out.println("Waiting for client on port " +
-                        serverSocket.getLocalPort() + "...");
+                System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
                 Socket clientSocket = serverSocket.accept();
 
-                System.out.println("Just connected to "
-                        + clientSocket.getRemoteSocketAddress());
+                System.out.println("Just connected to " + clientSocket.getRemoteSocketAddress());
 
-                Thread t = new ClientHandler(clientSocket,executor);
+                Thread t = new ClientHandler(clientSocket, executor);
                 t.start();
                 connectedClients.add(t);
 
