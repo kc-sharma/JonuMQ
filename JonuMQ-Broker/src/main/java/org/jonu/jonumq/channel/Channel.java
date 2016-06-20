@@ -2,7 +2,8 @@ package org.jonu.jonumq.channel;
 
 import org.jonu.jonumq.JonuMQMessageWrapper;
 
-import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,16 +14,16 @@ import java.util.List;
  */
 public class Channel
 {
-    private List<JonuMQMessageWrapper> listOfMessages;
-    private List<DataOutput> consumerList;
-    private int messageCount;
-    private ChannelType channelType = null;
-    private boolean running = true;
+    private volatile List<JonuMQMessageWrapper> listOfMessages;
+    private volatile List<ObjectOutputStream> consumerList;
+    private volatile int messageCount;
+    private volatile ChannelType channelType = null;
+    private volatile boolean running = true;
 
     public Channel()
     {
         this.listOfMessages = new ArrayList<JonuMQMessageWrapper>();
-        this.consumerList = new ArrayList<DataOutput>();
+        this.consumerList = new ArrayList<ObjectOutputStream>();
     }
 
     public List<JonuMQMessageWrapper> getListOfMessages()
@@ -54,7 +55,7 @@ public class Channel
         return null;
     }
 
-    public void addConsumer(DataOutput out)
+    public void addConsumer(ObjectOutputStream out)
     {
         consumerList.add(out);
     }
@@ -89,12 +90,12 @@ public class Channel
         this.messageCount = messageCount;
     }
 
-    public List<DataOutput> getConsumerList()
+    public List<ObjectOutputStream> getConsumerList()
     {
         return consumerList;
     }
 
-    public void setConsumerList(List<DataOutput> consumerList)
+    public void setConsumerList(List<ObjectOutputStream> consumerList)
     {
         this.consumerList = consumerList;
     }

@@ -3,9 +3,9 @@
  */
 package org.jonu.jonumq.destination;
 
+import org.jonu.jonumq.JonuMQWireMessage;
 import org.jonu.jonumq.exception.DestinationNotFound;
 
-import java.io.DataInput;
 import java.io.IOException;
 
 /**
@@ -17,11 +17,9 @@ public class DestinationResolver
 {
     final static int DESTINATION_LENGTH = 128; //TODO should go in Configuration
 
-    public static String resolve(DataInput in) throws IOException
+    public static String resolve(JonuMQWireMessage wireMessage) throws IOException
     {
-        byte[] bytes = new byte[DESTINATION_LENGTH];
-        in.readFully(bytes, 1, DESTINATION_LENGTH);
-        String destination = new String(bytes).trim();
+        String destination = wireMessage.getDestination();
 
         if (destination == null || destination.isEmpty()) {
             throw new DestinationNotFound("Destination Name cannot be null");

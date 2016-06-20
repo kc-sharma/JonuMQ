@@ -3,7 +3,8 @@
  */
 package org.jonu.jonumq.client;
 
-import java.io.DataInput;
+import org.jonu.jonumq.JonuMQWireMessage;
+
 import java.io.IOException;
 
 /**
@@ -17,13 +18,13 @@ public class ClientTypeResolver
 
     static {
         handlers = new ClientTypeHandler[3];
-        handlers[1] = new ConsumerClientTypeHandler();
-        handlers[2] = new ProducerClientTypeHandler();
+        handlers[1] = new ProducerClientTypeHandler();
+        handlers[2] = new ConsumerClientTypeHandler();
     }
 
-    public static ClientTypeHandler resolve(DataInput in) throws IOException
+    public static ClientTypeHandler resolve(JonuMQWireMessage wireMessage) throws IOException
     {
-        short value = in.readShort();
+        short value = wireMessage.getClientType();
 
         if (value < 1) {
             throw new NullPointerException("Consumer type is not defined");

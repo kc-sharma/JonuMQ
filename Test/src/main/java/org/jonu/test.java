@@ -3,9 +3,7 @@
  */
 package org.jonu;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -15,16 +13,35 @@ import java.net.Socket;
  */
 public class Test
 {
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args) throws IOException, InterruptedException
+    {
+        readSocket();
+    }
+
+    public static void readSocket() throws IOException, InterruptedException
     {
         Socket client = new Socket("localhost", 2056);
+        DataOutput out = null;
+        try {
+            DataInput in = new DataInputStream(client.getInputStream());
+            out = new DataOutputStream(client.getOutputStream());
+        } catch (Exception e) {
 
-        DataInput in = (DataInput) client.getInputStream();
-        DataOutput out = (DataOutput) client.getOutputStream();
-        
+        }
+
         while (true) {
+            Thread.sleep(10000);
+            out.writeShort(1);
+            out.writeShort(1);
+            out.writeShort(1);
 
+            byte[] buf = new byte[128];
+            out.write(buf);
 
+            out.writeShort(1);
+
+            ObjectOutputStream outputStream = new ObjectOutputStream(new DataOutputStream((DataOutputStream) out));
+            outputStream.writeObject(new JonuMQMessageWrapper());
         }
     }
 }

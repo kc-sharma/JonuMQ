@@ -3,13 +3,16 @@
  */
 package org.jonu.jonumq.broker;
 
+import org.jonu.jonumq.JonuMQWireMessage;
 import org.jonu.jonumq.channel.ChannelExecutor;
 import org.jonu.jonumq.client.ClientTypeHandler;
 import org.jonu.jonumq.client.ClientTypeResolver;
 import org.jonu.jonumq.exception.BrokerStoppedException;
+import sun.net.ConnectionResetException;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * @author prabhato
@@ -30,8 +33,9 @@ public class ClientHandler extends Thread
     @Override
     public void run()
     {
-        DataInput in = null;
-        DataOutput out = null;
+        System.out.println("Hello");
+        DataInputStream in = null;
+        DataOutputStream out = null;
         try {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
@@ -40,32 +44,62 @@ public class ClientHandler extends Thread
             e.printStackTrace();
         } catch (BrokerStoppedException e) {
             e.printStackTrace();
+        } finally {
+
         }
     }
 
-    private void doProcess(DataInput in, DataOutput out) throws BrokerStoppedException
+    private void doProcess(DataInputStream in, DataOutputStream out) throws BrokerStoppedException
     {
+        ObjectInputStream objectInputStream = null;
         while (true) {
-            if (!Server.isBrokerRunning()) {
-                throw new BrokerStoppedException("Broker was stopped, stopping all work");
+            try {
+                if (objectInputStream == null) {
+                    objectInputStream = getInputStream(in);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Couldn't get input stream, retrying again");
             }
-            // start Processing if we receive any data on inputput stream
-            if (checkIfAnyBytesReceived(in)) {
-                ClientTypeHandler client = null;
+            if (objectInputStream != null) {
+                if (!Server.isBrokerRunning()) {
+                    throw new BrokerStoppedException("Broker was stopped, stopping all work");
+                }
+                // start Processing if we receive any data on input stream
                 try {
-                    client = ClientTypeResolver.resolve(in);
-                    client.doProcess(in, out, executor);
+                    JonuMQWireMessage wireMessage = receiveObject(objectInputStream);
+                    if (wireMessage != null) {
+                        ClientTypeHandler client = null;
+
+                        client = ClientTypeResolver.resolve(wireMessage);
+                        client.doProcess(wireMessage, out, executor);
+                    }
+                } catch (ConnectionResetException cre) {
+                    System.out.println("Client got disconnected");
+                    break;
+                } catch (SocketException ex) {
+                    System.out.println("Client Got Disconnected");
+                    break;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    break;
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
+                    break;
                 }
             }
         }
+
     }
 
-    private boolean checkIfAnyBytesReceived(DataInput in)
+    private ObjectInputStream getInputStream(DataInputStream in) throws IOException
     {
+        return new ObjectInputStream(in);
+    }
+
+    private boolean checkIfAnyObjectReceived(DataInput in)
+    {
+
         try {
             short value = in.readShort();
             if (value > 0)
@@ -74,5 +108,10 @@ public class ClientHandler extends Thread
             e.printStackTrace();
         }
         return false;
+    }
+
+    private JonuMQWireMessage receiveObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        return (JonuMQWireMessage) in.readObject();
     }
 }

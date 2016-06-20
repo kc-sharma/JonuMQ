@@ -3,7 +3,8 @@
  */
 package org.jonu.jonumq.destination;
 
-import java.io.DataInput;
+import org.jonu.jonumq.JonuMQWireMessage;
+
 import java.io.IOException;
 
 /**
@@ -21,9 +22,9 @@ public class DestinationTypeResolver
         destinations[2] = new JonuMQTopicDestinationType();
     }
 
-    public static JonuMQDestinationType resolve(DataInput in) throws IOException
+    public static JonuMQDestinationType resolve(JonuMQWireMessage wireMessage) throws IOException
     {
-        short value = in.readShort();
+        short value = wireMessage.getDestinationType();
         if (value < 1) {
             throw new NullPointerException("Unrecognised value at input stream");
         }

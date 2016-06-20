@@ -3,10 +3,12 @@
  */
 package org.jonu.jonumq.client;
 
+import org.jonu.jonumq.JonuMQWireMessage;
 import org.jonu.jonumq.channel.ChannelExecutor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -16,5 +18,5 @@ import java.io.IOException;
  */
 public interface ClientTypeHandler
 {
-    public void doProcess(DataInput in, DataOutput out, ChannelExecutor executor) throws IOException, ClassNotFoundException;
+    public void doProcess(JonuMQWireMessage wireMessage, DataOutputStream out, ChannelExecutor executor) throws IOException, ClassNotFoundException;
 }

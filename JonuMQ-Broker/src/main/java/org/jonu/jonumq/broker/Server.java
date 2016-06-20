@@ -34,7 +34,7 @@ public class Server
     {
         this();
         serverSocket = new ServerSocket(port);
-        serverSocket.setSoTimeout(0000);
+        serverSocket.setSoTimeout(0);
     }
 
     public void start(ChannelExecutor executor)

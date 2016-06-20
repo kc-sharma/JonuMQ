@@ -15,9 +15,9 @@ import java.util.Map;
 public class ChannelExecutor
 {
 
-    private static ChannelExecutor channelExecutor = new ChannelExecutor();
+    private static volatile ChannelExecutor channelExecutor = new ChannelExecutor();
 
-    static Map<String, Channel> channels;
+    private static volatile Map<String, Channel> channels;
 
     private ChannelExecutor()
     {
@@ -31,7 +31,7 @@ public class ChannelExecutor
 
     public Channel getChannel(String channelName)
     {
-        if (channelName != null || channelName.isEmpty()) {
+        if (channelName == null || channelName.isEmpty()) {
             throw new UnknownDefinedChannel("Channel Name can't be null or empty");
         }
         if (channels.containsKey(channelName)) {

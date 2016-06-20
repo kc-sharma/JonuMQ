@@ -3,11 +3,10 @@
  */
 package org.jonu.jonumq.destination;
 
-import org.jonu.jonumq.channel.Channel;
+import org.jonu.jonumq.JonuMQWireMessage;
 import org.jonu.jonumq.channel.ChannelExecutor;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -18,13 +17,13 @@ import java.io.IOException;
 public class JonuMQTopicDestinationType implements JonuMQDestinationType
 {
     @Override
-    public void consume(DataInput in, DataOutput out, ChannelExecutor executor) throws IOException
+    public void consume(JonuMQWireMessage wireMessage, DataOutputStream out, ChannelExecutor executor) throws IOException
     {
 
     }
 
     @Override
-    public void produce(DataInput in, DataOutput out, ChannelExecutor executor) throws IOException
+    public void produce(JonuMQWireMessage wireMessage, DataOutputStream out, ChannelExecutor executor) throws IOException
     {
 
     }

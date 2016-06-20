@@ -4,11 +4,15 @@
 package org.jonu.jonumq.destination;
 
 import org.jonu.jonumq.JonuMQMessageWrapper;
+import org.jonu.jonumq.JonuMQWireMessage;
 import org.jonu.jonumq.channel.Channel;
 import org.jonu.jonumq.channel.ChannelExecutor;
 import org.jonu.jonumq.channel.ChannelType;
 
-import java.io.*;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 /**
  * @author prabhato
@@ -18,37 +22,41 @@ import java.io.*;
 public class JonuMQQueueDestinationType implements JonuMQDestinationType
 {
     @Override
-    public void consume(DataInput in, DataOutput out, ChannelExecutor executor) throws IOException
+    public void consume(JonuMQWireMessage wireMessage, DataOutputStream out, ChannelExecutor executor) throws IOException
     {
-        Channel channel = getChannel(in, executor);
+        Channel channel = getChannel(wireMessage, executor);
         channel.setChannelType(ChannelType.QUEUE);
+
+        // read marshaller information and ignore it as we will not use marshaller at broker side
+        // readMarshaller(in);
+
         addConsumerIfNotExist(channel, out);
     }
 
     @Override
-    public void produce(DataInput in, DataOutput out, ChannelExecutor executor) throws IOException, ClassNotFoundException
+    public void produce(JonuMQWireMessage wireMessage, DataOutputStream out, ChannelExecutor executor) throws IOException
     {
 
         // We doesn't need marshaller here, why we wanna marshall and unmarshall here, we can simply store the
         // message in byte format
 
-        Channel channel = getChannel(in, executor);
+        Channel channel = getChannel(wireMessage, executor);
         channel.setChannelType(ChannelType.QUEUE);
 
         // read marshaller information and ignore it as we will not use marshaller at broker side
-        readMarshaller(in);
+        //readMarshaller(in);
 
         // read the message object from in stream
-        JonuMQMessageWrapper message = deserializeObject(in);
+        JonuMQMessageWrapper message = wireMessage.getMessage();
         message.setMessageInTime(System.currentTimeMillis());
 
         channel.addMessage(message);
     }
 
-    private Channel getChannel(DataInput in, ChannelExecutor executor) throws IOException
+    private Channel getChannel(JonuMQWireMessage wireMessage, ChannelExecutor executor) throws IOException
     {
         // read the destination name
-        String destination = DestinationResolver.resolve(in);
+        String destination = DestinationResolver.resolve(wireMessage);
         Channel channel = executor.getChannel(destination);
         if (channel == null) {
             channel = executor.addNewChannel(destination);
@@ -56,21 +64,9 @@ public class JonuMQQueueDestinationType implements JonuMQDestinationType
         return channel;
     }
 
-    private void readMarshaller(DataInput in) throws IOException
+    private void addConsumerIfNotExist(Channel channel, DataOutputStream out) throws IOException
     {
-        in.readShort();
-    }
-
-    private JonuMQMessageWrapper deserializeObject(DataInput in) throws IOException, ClassNotFoundException
-    {
-        ObjectInputStream inputStream = new ObjectInputStream(new DataInputStream((DataInputStream) in));
-        JonuMQMessageWrapper message = (JonuMQMessageWrapper) inputStream.readObject();
-
-        return message;
-    }
-
-    private void addConsumerIfNotExist(Channel channel, DataOutput out)
-    {
-        channel.addConsumer(out);
+        ObjectOutputStream outputStream = new ObjectOutputStream(out);
+        channel.addConsumer(outputStream);
     }
 }
