@@ -14,23 +14,28 @@ import java.io.ObjectOutputStream;
  * @version $Revision$, $Date$, $Author$
  * @since 6/17/2016
  */
-public class QueueConsumer implements Consumer
+public class QueueConsumer extends Consumer
 {
     @Override
     public void
     doProcess(Channel channel) throws IOException
     {
         JonuMQMessageWrapper message = channel.getFirstMessage();
-        message.setMessageOutTime(System.currentTimeMillis());
+        if (message != null) {
+            message.setMessageOutTime(System.currentTimeMillis());
 
-        if (message.isPersistent()) {
-            // TODO persist the message
-        }
+            for (ObjectOutputStream out : channel.getConsumerList()) {
+                try {
+                    super.dispatchMessage(out, message);
+                    message.setConsumed(true);
+                } catch (IOException ex) {
+                    // If consumer is disconnected we can remove the consumer OUTPUT stream from the list
+                    channel.removeOutStream(out);
+                }
+                break;
+            }
 
-
-        for (ObjectOutputStream out : channel.getConsumerList()) {
-            out.writeObject(message);
-            break;
+            super.persistMessage(message);
         }
     }
 }

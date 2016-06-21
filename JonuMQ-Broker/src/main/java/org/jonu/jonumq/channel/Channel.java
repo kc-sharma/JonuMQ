@@ -2,10 +2,11 @@ package org.jonu.jonumq.channel;
 
 import org.jonu.jonumq.JonuMQMessageWrapper;
 
-import java.io.DataOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author prabhato
@@ -14,11 +15,13 @@ import java.util.List;
  */
 public class Channel
 {
+    private final Logger logger = Logger.getLogger(Channel.class.getName());
     private volatile List<JonuMQMessageWrapper> listOfMessages;
     private volatile List<ObjectOutputStream> consumerList;
     private volatile int messageCount;
     private volatile ChannelType channelType = null;
     private volatile boolean running = true;
+    private final int MAX_MESSAGES = Integer.MAX_VALUE;
 
     public Channel()
     {
@@ -41,8 +44,18 @@ public class Channel
         if (jonuMQMessageWrapper == null) {
             throw new NullPointerException("Message object can't be null");
         }
-        this.listOfMessages.add(messageCount, jonuMQMessageWrapper);
+
+        haltIfReachedMaxMessage();
+        this.listOfMessages.add(jonuMQMessageWrapper);
         messageCount++;
+    }
+
+    private void haltIfReachedMaxMessage()
+    {
+        if (messageCount >= MAX_MESSAGES) {
+            logger.log(Level.INFO, "Buffer message queue is full halting producer for a while to send message");
+            while (messageCount > MAX_MESSAGES - 10) ;
+        }
     }
 
     public JonuMQMessageWrapper getFirstMessage()
@@ -98,5 +111,10 @@ public class Channel
     public void setConsumerList(List<ObjectOutputStream> consumerList)
     {
         this.consumerList = consumerList;
+    }
+
+    public void removeOutStream(ObjectOutputStream out)
+    {
+        consumerList.remove(out);
     }
 }

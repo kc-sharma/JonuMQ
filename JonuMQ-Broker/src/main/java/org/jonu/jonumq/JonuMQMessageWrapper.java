@@ -19,6 +19,17 @@ public class JonuMQMessageWrapper implements Serializable
     long messageOutTime;
     boolean persistent;
     ByteMessage message;
+    boolean consumed = false;
+
+    public boolean isConsumed()
+    {
+        return consumed;
+    }
+
+    public void setConsumed(boolean consumed)
+    {
+        this.consumed = consumed;
+    }
 
     public JonuMQMessageWrapper()
     {

@@ -10,7 +10,7 @@ import org.jonu.jonumq.channel.Channel;
  * @version $Revision$, $Date$, $Author$
  * @since 6/17/2016
  */
-public class TopicConsumer implements Consumer
+public class TopicConsumer extends Consumer
 {
     @Override
     public void doProcess(Channel channel)

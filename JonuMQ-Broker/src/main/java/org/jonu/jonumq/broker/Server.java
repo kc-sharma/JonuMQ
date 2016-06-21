@@ -12,6 +12,8 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author prabhato
@@ -24,6 +26,7 @@ public class Server
     private JonuMQMarshallerResolver marshallerResolver = new JonuMQMarshallerResolver();
     static boolean brokerRunning = true;
     List<Thread> connectedClients;
+    private static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
 
     public Server()
     {
@@ -45,17 +48,17 @@ public class Server
                 break;
             }
             try {
-                System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
+                logger.log(Level.INFO, "Waiting for new client on port " + serverSocket.getLocalPort() + "...");
                 Socket clientSocket = serverSocket.accept();
 
-                System.out.println("Just connected to " + clientSocket.getRemoteSocketAddress());
+                logger.log(Level.INFO, "Just connected to " + clientSocket.getRemoteSocketAddress());
 
                 Thread t = new ClientHandler(clientSocket, executor);
                 t.start();
                 connectedClients.add(t);
 
             } catch (SocketTimeoutException s) {
-                System.out.println("Socket timed out! Still waiting for client");
+                logger.log(Level.INFO, "Socket timed out! Still waiting for client");
             } catch (IOException e) {
                 try {
                     serverSocket.close();

@@ -13,6 +13,8 @@ import sun.net.ConnectionResetException;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author prabhato
@@ -21,6 +23,7 @@ import java.net.SocketException;
  */
 public class ClientHandler extends Thread
 {
+    private static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
     private Socket socket;
     private ChannelExecutor executor;
 
@@ -33,9 +36,9 @@ public class ClientHandler extends Thread
     @Override
     public void run()
     {
-        System.out.println("Hello");
         DataInputStream in = null;
         DataOutputStream out = null;
+
         try {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
@@ -58,11 +61,12 @@ public class ClientHandler extends Thread
                     objectInputStream = getInputStream(in);
                 }
             } catch (IOException e) {
+                logger.log(Level.SEVERE, "Couldn't get input stream, retrying again");
                 e.printStackTrace();
-                System.out.println("Couldn't get input stream, retrying again");
             }
             if (objectInputStream != null) {
                 if (!Server.isBrokerRunning()) {
+                    logger.log(Level.SEVERE, "Broker was stopped, stopping all work");
                     throw new BrokerStoppedException("Broker was stopped, stopping all work");
                 }
                 // start Processing if we receive any data on input stream
@@ -75,15 +79,17 @@ public class ClientHandler extends Thread
                         client.doProcess(wireMessage, out, executor);
                     }
                 } catch (ConnectionResetException cre) {
-                    System.out.println("Client got disconnected");
+                    logger.log(Level.INFO, "Client got disconnected");
                     break;
                 } catch (SocketException ex) {
-                    System.out.println("Client Got Disconnected");
+                    logger.log(Level.INFO, "Client got disconnected");
                     break;
                 } catch (IOException e) {
+                    logger.log(Level.INFO, "Client got disconnected");
                     e.printStackTrace();
                     break;
                 } catch (ClassNotFoundException e) {
+                    logger.log(Level.INFO, "Client got disconnected");
                     e.printStackTrace();
                     break;
                 }
