@@ -9,10 +9,19 @@
  */
 package com.jonu.jonumq.transport;
 
+import com.jonu.jonumq.JonuMQDestination;
+import com.jonu.jonumq.JonuMQListener;
+import com.jonu.jonumq.JonuMQQueue;
+import com.jonu.jonumq.consumer.JonuMQConsumer;
+import com.jonu.jonumq.message.JonuMQTextMessage;
 import com.jonu.jonumq.producer.JonuMQProducer;
 
 import javax.jms.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.Socket;
 
 /**
  * @author prabhato
@@ -21,6 +30,19 @@ import java.io.Serializable;
  */
 public class JonuMQSession implements Session
 {
+    private JonuMQListener listener = null;
+    private ObjectOutputStream out = null;
+    private JonuMQDestination destination = null;
+    private String destinationName;
+    private JonuMQConnection connection;
+    private Socket client;
+
+    public JonuMQSession(JonuMQConnection jonuMQConnection, Socket client)
+    {
+        this.connection = jonuMQConnection;
+        this.client = client;
+    }
+
     @Override
     public BytesMessage createBytesMessage() throws JMSException
     {
@@ -66,7 +88,7 @@ public class JonuMQSession implements Session
     @Override
     public TextMessage createTextMessage(String s) throws JMSException
     {
-        return null;
+        return new JonuMQTextMessage(s);
     }
 
     @Override
@@ -108,13 +130,16 @@ public class JonuMQSession implements Session
     @Override
     public MessageListener getMessageListener() throws JMSException
     {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        if (listener != null) {
+            return (MessageListener) listener;
+        }
+        throw new NullPointerException("Message Listener has not been set");
     }
 
     @Override
     public void setMessageListener(MessageListener messageListener) throws JMSException
     {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        listener = new JonuMQListener(messageListener);
     }
 
     @Override
@@ -126,13 +151,27 @@ public class JonuMQSession implements Session
     @Override
     public MessageProducer createProducer(Destination destination) throws JMSException
     {
-        return new JonuMQProducer();
+
+        out = getOutPutStream(client);
+        return new JonuMQProducer(client, destination, out);
+    }
+
+    private ObjectOutputStream getOutPutStream(Socket client) throws JMSException
+    {
+        ObjectOutputStream out = null;
+        try {
+            out = new ObjectOutputStream(new DataOutputStream(client.getOutputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();  //$REVIEW$ To change body of catch statement use File | Settings | File Templates.
+            connection.start();
+        }
+        return out;
     }
 
     @Override
     public MessageConsumer createConsumer(Destination destination) throws JMSException
     {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        return new JonuMQConsumer();
     }
 
     @Override
@@ -162,7 +201,15 @@ public class JonuMQSession implements Session
     @Override
     public Queue createQueue(String s) throws JMSException
     {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        validateQueueName(s);
+        return new JonuMQQueue(s);
+    }
+
+    private void validateQueueName(String name)
+    {
+        if (name == null || !name.isEmpty()) {
+            throw new NullPointerException("Destination name can't be null or empty");
+        }
     }
 
     @Override

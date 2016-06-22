@@ -1,7 +1,7 @@
 /*
  *
  */
-package com.jonu.jonumq;
+package jonumq;
 
 import com.jonu.jonumq.transport.JonuMQConnectionFactory;
 import org.junit.Test;

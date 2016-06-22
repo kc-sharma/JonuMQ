@@ -4,6 +4,7 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
+import java.net.Socket;
 
 /**
  * @author prabhato
@@ -13,9 +14,11 @@ import javax.jms.JMSException;
 public class JonuMQConnectionFactory implements ConnectionFactory
 {
     private final String DEFAULT_HOST = "localhost";
+    private JonuMQConnection connection;
     private final int DEFAULT_PORT = 2056;
     private String host;
     private int port;
+    private Socket client;
 
     public JonuMQConnectionFactory(String host, int port)
     {
@@ -44,7 +47,8 @@ public class JonuMQConnectionFactory implements ConnectionFactory
 
     private JonuMQConnection createJonuMQConnection()
     {
-        return new JonuMQConnection();
+        connection = new JonuMQConnection(this,client, host, port);
+        return connection;
     }
 
     @Override
@@ -75,5 +79,15 @@ public class JonuMQConnectionFactory implements ConnectionFactory
     public JMSContext createContext(int i)
     {
         return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public JonuMQConnection getConnection()
+    {
+        return connection;
+    }
+
+    public void setConnection(JonuMQConnection connection)
+    {
+        this.connection = connection;
     }
 }

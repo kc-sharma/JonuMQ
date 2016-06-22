@@ -3,7 +3,11 @@
  */
 package com.jonu.jonumq.producer;
 
+import com.jonu.jonumq.JonuMQDestination;
+
 import javax.jms.*;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 /**
  * @author prabhato
@@ -12,7 +16,17 @@ import javax.jms.*;
  */
 public class JonuMQProducer implements MessageProducer
 {
+    private ObjectOutputStream out;
+    private JonuMQDestination destination;
     int deliveryMode;
+    private Socket client;
+
+    public JonuMQProducer(Socket client, Destination destination, ObjectOutputStream out)
+    {
+        this.client = client;
+        this.destination = (JonuMQDestination) destination;
+        this.out = out;
+    }
 
     @Override
     public void setDisableMessageID(boolean b) throws JMSException
@@ -101,7 +115,17 @@ public class JonuMQProducer implements MessageProducer
     @Override
     public void send(Message message) throws JMSException
     {
+        sendMessage(message);
+    }
 
+    private void sendMessage(Message message)
+    {
+        Message wireMessage = marshallMessageToOurFormat();
+    }
+
+    private Message marshallMessageToOurFormat()
+    {
+        return null;  //$REVIEW$ To change body of created methods use File | Settings | File Templates.
     }
 
     @Override

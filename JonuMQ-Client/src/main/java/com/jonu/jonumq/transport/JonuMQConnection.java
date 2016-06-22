@@ -4,6 +4,10 @@
 package com.jonu.jonumq.transport;
 
 import javax.jms.*;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author prabhato
@@ -12,15 +16,32 @@ import javax.jms.*;
  */
 public class JonuMQConnection implements Connection
 {
-    public JonuMQConnection()
-    {
+    private Logger logger = Logger.getLogger(JonuMQConnection.class.getName());
+    private JonuMQConnectionFactory connectionFactory;
+    Socket client;
+    String host;
+    int port;
 
+    public JonuMQConnection(JonuMQConnectionFactory factory, Socket client, String host, int port)
+    {
+        this.connectionFactory = factory;
+        this.client = client;
+        this.host = host;
+        this.port = port;
     }
 
     @Override
     public Session createSession(boolean b, int i) throws JMSException
     {
-        return null;
+        checkIfClientConnectedToServer();
+        return new JonuMQSession(this, client);
+    }
+
+    private void checkIfClientConnectedToServer()
+    {
+        if (client == null) {
+            throw new NullPointerException("Not able to connect to the server");
+        }
     }
 
     @Override
@@ -68,7 +89,22 @@ public class JonuMQConnection implements Connection
     @Override
     public void start() throws JMSException
     {
-        //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        while (client == null) {
+            try {
+                client = new Socket(host, port);
+            } catch (IOException e) {
+                client = null;
+                logger.log(Level.SEVERE, "Either remote server is not running or there is some issue connecting to host: " +
+                        host + " and port: " + port + "  Retrying again after 10 seconds");
+
+                e.printStackTrace();  //$REVIEW$ To change body of catch statement use File | Settings | File Templates.
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -105,5 +141,15 @@ public class JonuMQConnection implements Connection
     public ConnectionConsumer createSharedDurableConnectionConsumer(Topic topic, String s, String s2, ServerSessionPool serverSessionPool, int i) throws JMSException
     {
         return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public JonuMQConnectionFactory getConnectionFactory()
+    {
+        return connectionFactory;
+    }
+
+    public void setConnectionFactory(JonuMQConnectionFactory connectionFactory)
+    {
+        this.connectionFactory = connectionFactory;
     }
 }
