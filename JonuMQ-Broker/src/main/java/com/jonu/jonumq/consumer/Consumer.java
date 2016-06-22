@@ -3,7 +3,7 @@
  */
 package com.jonu.jonumq.consumer;
 
-import com.jonu.jonumq.JonuMQMessageWrapper;
+import com.jonu.jonumq.message.JonuMQMessageWrapper;
 import com.jonu.jonumq.channel.Channel;
 
 import java.io.IOException;

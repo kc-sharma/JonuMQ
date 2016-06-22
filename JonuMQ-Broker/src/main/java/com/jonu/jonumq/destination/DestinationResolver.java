@@ -3,8 +3,8 @@
  */
 package com.jonu.jonumq.destination;
 
-import com.jonu.jonumq.JonuMQWireMessage;
 import com.jonu.jonumq.exception.DestinationNotFound;
+import com.jonu.jonumq.message.JonuMQWireMessage;
 
 import java.io.IOException;
 

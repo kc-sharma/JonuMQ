@@ -3,10 +3,10 @@
  */
 package com.jonu.jonumq.client;
 
-import com.jonu.jonumq.JonuMQWireMessage;
 import com.jonu.jonumq.channel.ChannelExecutor;
 import com.jonu.jonumq.destination.DestinationTypeResolver;
 import com.jonu.jonumq.destination.JonuMQDestinationType;
+import com.jonu.jonumq.message.JonuMQWireMessage;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

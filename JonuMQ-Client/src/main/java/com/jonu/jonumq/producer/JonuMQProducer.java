@@ -4,10 +4,12 @@
 package com.jonu.jonumq.producer;
 
 import com.jonu.jonumq.JonuMQDestination;
+import com.jonu.jonumq.message.JonuMQMessage;
+import com.jonu.jonumq.message.JonuMQMessageWrapper;
+import com.jonu.jonumq.message.JonuMQWireMessage;
+import com.jonu.jonumq.transport.TransportFactory;
 
 import javax.jms.*;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 /**
  * @author prabhato
@@ -16,16 +18,16 @@ import java.net.Socket;
  */
 public class JonuMQProducer implements MessageProducer
 {
-    private ObjectOutputStream out;
     private JonuMQDestination destination;
     int deliveryMode;
-    private Socket client;
+    private TransportFactory transportFactory;
+    private JonuMQWireMessage wireMessage;
 
-    public JonuMQProducer(Socket client, Destination destination, ObjectOutputStream out)
+    public JonuMQProducer(JonuMQWireMessage wireMessage, TransportFactory transportFactory, Destination destination)
     {
-        this.client = client;
+        this.wireMessage = wireMessage;
+        this.transportFactory = transportFactory;
         this.destination = (JonuMQDestination) destination;
-        this.out = out;
     }
 
     @Override
@@ -118,10 +120,23 @@ public class JonuMQProducer implements MessageProducer
         sendMessage(message);
     }
 
-    private void sendMessage(Message message)
+    private void sendMessage(Message message) throws JMSException
     {
-        Message wireMessage = marshallMessageToOurFormat();
+        setWireMessageProperties(message);
+        transportFactory.send(wireMessage);
     }
+
+    private void setWireMessageProperties(Message message)
+    {
+        JonuMQMessageWrapper messageWrapper = new JonuMQMessageWrapper();
+        messageWrapper.setDestination(wireMessage.getDestination());
+        messageWrapper.setMessage((JonuMQMessage) message);
+        messageWrapper.setMessageCreationTime(System.currentTimeMillis());
+        messageWrapper.setPersistent(getPersistMode());
+        wireMessage.setMessage(messageWrapper);
+
+    }
+
 
     private Message marshallMessageToOurFormat()
     {
@@ -168,5 +183,12 @@ public class JonuMQProducer implements MessageProducer
     public void send(Destination destination, Message message, int i, int i2, long l, CompletionListener completionListener) throws JMSException
     {
         //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean getPersistMode()
+    {
+        if (deliveryMode == DeliveryMode.PERSISTENT)
+            return true;
+        return false;
     }
 }

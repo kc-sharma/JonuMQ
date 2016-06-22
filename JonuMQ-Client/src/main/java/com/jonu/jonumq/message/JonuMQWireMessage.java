@@ -1,9 +1,7 @@
 /*
  *
  */
-package com.jonu.jonumq;
-
-import com.jonu.jonumq.marshaller.JonuMQMarshaller;
+package com.jonu.jonumq.message;
 
 import java.io.Serializable;
 
@@ -16,9 +14,7 @@ public class JonuMQWireMessage implements Serializable
 {
     short clientType;
     short destinationType;
-    int destinationLength;
     String destination;
-    JonuMQMarshaller marshaller;
     JonuMQMessageWrapper message;
 
     public JonuMQWireMessage()
@@ -36,16 +32,6 @@ public class JonuMQWireMessage implements Serializable
         this.message = message;
     }
 
-    public JonuMQMarshaller getMarshaller()
-    {
-        return marshaller;
-    }
-
-    public void setMarshaller(JonuMQMarshaller marshaller)
-    {
-        this.marshaller = marshaller;
-    }
-
     public String getDestination()
     {
         return destination;
@@ -54,16 +40,6 @@ public class JonuMQWireMessage implements Serializable
     public void setDestination(String destination)
     {
         this.destination = destination;
-    }
-
-    public int getDestinationLength()
-    {
-        return destinationLength;
-    }
-
-    public void setDestinationLength(int destinationLength)
-    {
-        this.destinationLength = destinationLength;
     }
 
     public short getDestinationType()

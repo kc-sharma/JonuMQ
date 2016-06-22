@@ -1,7 +1,9 @@
 /*
  *
  */
-package com.jonu.jonumq;
+package com.jonu.jonumq.message;
+
+import com.jonu.jonumq.message.JonuMQMessage;
 
 import java.io.Serializable;
 
@@ -18,7 +20,7 @@ public class JonuMQMessageWrapper implements Serializable
     long messageInTime;
     long messageOutTime;
     boolean persistent;
-    ByteMessage message;
+    JonuMQMessage message;
     boolean consumed = false;
 
     public boolean isConsumed()
@@ -86,7 +88,7 @@ public class JonuMQMessageWrapper implements Serializable
         this.messageId = messageId;
     }
 
-    public void setMessage(ByteMessage message)
+    public void setMessage(JonuMQMessage message)
     {
         this.message = message;
     }
@@ -101,7 +103,7 @@ public class JonuMQMessageWrapper implements Serializable
         this.destination = destination;
     }
 
-    public ByteMessage getMessage()
+    public JonuMQMessage getMessage()
     {
         return message;
     }

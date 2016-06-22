@@ -1,5 +1,7 @@
 package com.jonu.jonumq.transport;
 
+import com.jonu.jonumq.message.JonuMQWireMessage;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
@@ -14,11 +16,12 @@ import java.net.Socket;
 public class JonuMQConnectionFactory implements ConnectionFactory
 {
     private final String DEFAULT_HOST = "localhost";
-    private JonuMQConnection connection;
     private final int DEFAULT_PORT = 2056;
+    private JonuMQConnection connection;
     private String host;
     private int port;
     private Socket client;
+    private TransportFactory factory;
 
     public JonuMQConnectionFactory(String host, int port)
     {
@@ -42,12 +45,13 @@ public class JonuMQConnectionFactory implements ConnectionFactory
     @Override
     public Connection createConnection() throws JMSException
     {
-        return createJonuMQConnection();
+        return _createJonuMQConnection();
     }
 
-    private JonuMQConnection createJonuMQConnection()
+    private JonuMQConnection _createJonuMQConnection()
     {
-        connection = new JonuMQConnection(this,client, host, port);
+        factory = new TransportFactory(host, port);
+        connection = new JonuMQConnection(factory, this, host, port);
         return connection;
     }
 

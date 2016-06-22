@@ -3,7 +3,7 @@
  */
 package com.jonu.jonumq.client;
 
-import com.jonu.jonumq.JonuMQWireMessage;
+import com.jonu.jonumq.message.JonuMQWireMessage;
 
 import java.io.IOException;
 

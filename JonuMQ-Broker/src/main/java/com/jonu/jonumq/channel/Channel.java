@@ -1,6 +1,6 @@
 package com.jonu.jonumq.channel;
 
-import com.jonu.jonumq.JonuMQMessageWrapper;
+import com.jonu.jonumq.message.JonuMQMessageWrapper;
 
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;

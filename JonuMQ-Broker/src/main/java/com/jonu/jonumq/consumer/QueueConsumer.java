@@ -3,7 +3,7 @@
  */
 package com.jonu.jonumq.consumer;
 
-import com.jonu.jonumq.JonuMQMessageWrapper;
+import com.jonu.jonumq.message.JonuMQMessageWrapper;
 import com.jonu.jonumq.channel.Channel;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class QueueConsumer extends Consumer
     {
         for (JonuMQMessageWrapper message = channel.getFirstMessage(); message != null;
              message = channel.getFirstMessage()) {
-            
+
             message.setMessageOutTime(System.currentTimeMillis());
 
             for (ObjectOutputStream out : channel.getConsumerList()) {

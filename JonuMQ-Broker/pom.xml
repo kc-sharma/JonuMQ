@@ -10,6 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>JonuMQ-Broker</artifactId>
-
+    <dependencies>
+        <dependency>
+            <groupId>JonuMQ</groupId>
+            <artifactId>JonuMQ-Client</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
 
 </project>

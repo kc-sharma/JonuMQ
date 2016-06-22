@@ -9,19 +9,15 @@
  */
 package com.jonu.jonumq.transport;
 
-import com.jonu.jonumq.JonuMQDestination;
-import com.jonu.jonumq.JonuMQListener;
-import com.jonu.jonumq.JonuMQQueue;
+import com.jonu.jonumq.*;
 import com.jonu.jonumq.consumer.JonuMQConsumer;
 import com.jonu.jonumq.message.JonuMQTextMessage;
+import com.jonu.jonumq.message.JonuMQWireMessage;
 import com.jonu.jonumq.producer.JonuMQProducer;
 
 import javax.jms.*;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.Socket;
 
 /**
  * @author prabhato
@@ -35,12 +31,13 @@ public class JonuMQSession implements Session
     private JonuMQDestination destination = null;
     private String destinationName;
     private JonuMQConnection connection;
-    private Socket client;
+    private TransportFactory transportFactory;
+    private JonuMQWireMessage wireMessage = new JonuMQWireMessage();
 
-    public JonuMQSession(JonuMQConnection jonuMQConnection, Socket client)
+    public JonuMQSession(JonuMQConnection jonuMQConnection, TransportFactory transportFactory)
     {
         this.connection = jonuMQConnection;
-        this.client = client;
+        this.transportFactory = transportFactory;
     }
 
     @Override
@@ -151,21 +148,11 @@ public class JonuMQSession implements Session
     @Override
     public MessageProducer createProducer(Destination destination) throws JMSException
     {
+        wireMessage.setClientType(ClientType.PRODUCER);
+        wireMessage.setDestination(((JonuMQDestination) destination).getDestinationName());
 
-        out = getOutPutStream(client);
-        return new JonuMQProducer(client, destination, out);
-    }
-
-    private ObjectOutputStream getOutPutStream(Socket client) throws JMSException
-    {
-        ObjectOutputStream out = null;
-        try {
-            out = new ObjectOutputStream(new DataOutputStream(client.getOutputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();  //$REVIEW$ To change body of catch statement use File | Settings | File Templates.
-            connection.start();
-        }
-        return out;
+        transportFactory.createOutPutStream();
+        return new JonuMQProducer(wireMessage, transportFactory, destination);
     }
 
     @Override
@@ -201,6 +188,7 @@ public class JonuMQSession implements Session
     @Override
     public Queue createQueue(String s) throws JMSException
     {
+        wireMessage.setDestinationType(DestinationType.QUEUE);
         validateQueueName(s);
         return new JonuMQQueue(s);
     }

@@ -3,7 +3,7 @@
  */
 package com.jonu.jonumq.destination;
 
-import com.jonu.jonumq.JonuMQWireMessage;
+import com.jonu.jonumq.message.JonuMQWireMessage;
 
 import java.io.IOException;
 
@@ -14,6 +14,8 @@ import java.io.IOException;
  */
 public class DestinationTypeResolver
 {
+    public static short QUEUE = 1;
+    public static short TOPIC = 2;
     static JonuMQDestinationType[] destinations;
 
     static {

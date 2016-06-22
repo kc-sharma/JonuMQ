@@ -4,9 +4,6 @@
 package com.jonu.jonumq.transport;
 
 import javax.jms.*;
-import java.io.IOException;
-import java.net.Socket;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -18,14 +15,14 @@ public class JonuMQConnection implements Connection
 {
     private Logger logger = Logger.getLogger(JonuMQConnection.class.getName());
     private JonuMQConnectionFactory connectionFactory;
-    Socket client;
     String host;
     int port;
+    private TransportFactory transportFactory;
 
-    public JonuMQConnection(JonuMQConnectionFactory factory, Socket client, String host, int port)
+    public JonuMQConnection(TransportFactory transportFactory, JonuMQConnectionFactory factory, String host, int port)
     {
+        this.transportFactory = transportFactory;
         this.connectionFactory = factory;
-        this.client = client;
         this.host = host;
         this.port = port;
     }
@@ -33,16 +30,16 @@ public class JonuMQConnection implements Connection
     @Override
     public Session createSession(boolean b, int i) throws JMSException
     {
-        checkIfClientConnectedToServer();
-        return new JonuMQSession(this, client);
+        //checkIfClientConnectedToServer();
+        return new JonuMQSession(this, transportFactory);
     }
 
-    private void checkIfClientConnectedToServer()
+    /*private void checkIfClientConnectedToServer()
     {
         if (client == null) {
             throw new NullPointerException("Not able to connect to the server");
         }
-    }
+    }*/
 
     @Override
     public Session createSession(int i) throws JMSException
@@ -89,22 +86,7 @@ public class JonuMQConnection implements Connection
     @Override
     public void start() throws JMSException
     {
-        while (client == null) {
-            try {
-                client = new Socket(host, port);
-            } catch (IOException e) {
-                client = null;
-                logger.log(Level.SEVERE, "Either remote server is not running or there is some issue connecting to host: " +
-                        host + " and port: " + port + "  Retrying again after 10 seconds");
-
-                e.printStackTrace();  //$REVIEW$ To change body of catch statement use File | Settings | File Templates.
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
+        transportFactory.start();
     }
 
     @Override

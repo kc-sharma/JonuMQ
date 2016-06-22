@@ -3,7 +3,7 @@
  */
 package com.jonu.jonumq.marshaller;
 
-import com.jonu.jonumq.JonuMQMessageWrapper;
+import com.jonu.jonumq.message.JonuMQMessageWrapper;
 
 import java.io.DataInput;
 import java.io.DataOutput;

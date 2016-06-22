@@ -17,7 +17,7 @@ public class TestClient
 {
 
     @Test
-    public void TestMe()
+    public void TestSendMessageToQueue()
     {
         try {
             JonuMQConnectionFactory connectionFactory = new JonuMQConnectionFactory();
