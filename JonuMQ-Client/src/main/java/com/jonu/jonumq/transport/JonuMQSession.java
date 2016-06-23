@@ -195,7 +195,7 @@ public class JonuMQSession implements Session
 
     private void validateQueueName(String name)
     {
-        if (name == null || !name.isEmpty()) {
+        if (name == null || name.isEmpty()) {
             throw new NullPointerException("Destination name can't be null or empty");
         }
     }

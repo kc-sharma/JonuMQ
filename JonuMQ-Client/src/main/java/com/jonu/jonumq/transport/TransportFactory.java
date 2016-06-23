@@ -141,7 +141,9 @@ public class TransportFactory
     private void closeOutStream()
     {
         try {
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

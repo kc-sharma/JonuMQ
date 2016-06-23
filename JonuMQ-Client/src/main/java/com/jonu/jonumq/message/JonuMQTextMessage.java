@@ -15,6 +15,11 @@ public class JonuMQTextMessage extends JonuMQMessage implements TextMessage
 {
     private String text;
 
+    public JonuMQTextMessage()
+    {
+
+    }
+
     public JonuMQTextMessage(String s)
     {
         this.text = s;

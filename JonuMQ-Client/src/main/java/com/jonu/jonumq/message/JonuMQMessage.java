@@ -6,6 +6,7 @@ package com.jonu.jonumq.message;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import java.io.Serializable;
 import java.util.Enumeration;
 
 /**
@@ -13,8 +14,13 @@ import java.util.Enumeration;
  * @version $Revision$, $Date$, $Author$
  * @since 6/21/2016
  */
-public class JonuMQMessage implements Message
+public class JonuMQMessage implements Message, Serializable
 {
+    public JonuMQMessage()
+    {
+
+    }
+
     @Override
     public String getJMSMessageID() throws JMSException
     {

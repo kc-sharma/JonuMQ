@@ -61,8 +61,9 @@ public class ClientHandler extends Thread
                     objectInputStream = getInputStream(in);
                 }
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Couldn't get input stream, retrying again");
+                logger.log(Level.INFO, "Client got disconnected");
                 e.printStackTrace();
+                break;
             }
             if (objectInputStream != null) {
                 if (!Server.isBrokerRunning()) {
