@@ -34,13 +34,6 @@ public class JonuMQConnection implements Connection
         return new JonuMQSession(this, transportFactory);
     }
 
-    /*private void checkIfClientConnectedToServer()
-    {
-        if (client == null) {
-            throw new NullPointerException("Not able to connect to the server");
-        }
-    }*/
-
     @Override
     public Session createSession(int i) throws JMSException
     {

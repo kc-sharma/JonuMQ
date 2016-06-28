@@ -3,14 +3,13 @@
  */
 package com.jonu.jonumq.transport;
 
+import com.jonu.jonumq.message.JonuMQMessageWrapper;
 import com.jonu.jonumq.message.JonuMQWireMessage;
 import sun.net.ConnectionResetException;
 
 import javax.jms.JMSException;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,7 +88,7 @@ public class TransportFactory
                 logger.log(Level.SEVERE, "Either remote server is not running or there is some issue connecting to host: " +
                         host + " and port: " + port + "  Retrying again after 10 seconds");
 
-                e.printStackTrace();  //$REVIEW$ To change body of catch statement use File | Settings | File Templates.
+                //e.printStackTrace();  //$REVIEW$ To change body of catch statement use File | Settings | File Templates.
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e1) {
@@ -102,13 +101,16 @@ public class TransportFactory
     public void createOutPutStream() throws JMSException
     {
         while (out == null) {
-            getOutPutStream(client);
+            getOutPutStream();
         }
     }
 
-    private void getOutPutStream(Socket client) throws JMSException
+    private void getOutPutStream() throws JMSException
     {
         try {
+            if (client == null) {
+                startClient();
+            }
             out = new ObjectOutputStream(new DataOutputStream(client.getOutputStream()));
         } catch (IOException e) {
             closeOutStream();
@@ -121,6 +123,9 @@ public class TransportFactory
     public void send(JonuMQWireMessage wireMessage) throws JMSException
     {
         try {
+            if (out == null) {
+                getOutPutStream();
+            }
             out.writeObject(wireMessage);
         } catch (ConnectionResetException ex) {
             closeOutStream();
@@ -149,5 +154,68 @@ public class TransportFactory
         } finally {
             out = null;
         }
+    }
+
+    public void createInPutStream()
+    {
+        while (in == null) {
+            getInPutStream();
+        }
+    }
+
+    private void getInPutStream()
+    {
+        try {
+            if (client == null) {
+                startClient();
+            }
+            in = new ObjectInputStream(new DataInputStream(client.getInputStream()));
+        } catch (IOException e) {
+            closeInStream();
+            startClient();
+            logger.log(Level.SEVERE, "");
+            e.printStackTrace();
+        }
+    }
+
+    private void closeInStream()
+    {
+        try {
+            if (in != null) {
+                in.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            in = null;
+        }
+    }
+
+    public JonuMQMessageWrapper readNextMessage() throws ClassNotFoundException
+    {
+        if (in == null) {
+            getInPutStream();
+        }
+
+        JonuMQMessageWrapper message = null;
+            try {
+            message = (JonuMQMessageWrapper) in.readObject();
+        } catch (ConnectException e) {
+            retryReceive();
+        } catch (ConnectionResetException e) {
+            retryReceive();
+        } catch (IOException e) {
+            e.printStackTrace();
+            retryReceive();
+        }
+        return message;
+
+    }
+
+    private void retryReceive()
+    {
+        closeInStream();
+        startClient();
+        createInPutStream();
     }
 }

@@ -158,7 +158,11 @@ public class JonuMQSession implements Session
     @Override
     public MessageConsumer createConsumer(Destination destination) throws JMSException
     {
-        return new JonuMQConsumer();
+        wireMessage.setClientType(ClientType.CONSUMER);
+        wireMessage.setDestination(((JonuMQDestination) destination).getDestinationName());
+
+        transportFactory.send(wireMessage);
+        return new JonuMQConsumer(wireMessage, transportFactory, destination);
     }
 
     @Override

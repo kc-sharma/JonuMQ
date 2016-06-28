@@ -4,11 +4,12 @@
 package com.jonu.jonumq.consumer;
 
 import com.jonu.jonumq.JonuMQListener;
+import com.jonu.jonumq.message.JonuMQMessage;
+import com.jonu.jonumq.message.JonuMQMessageWrapper;
+import com.jonu.jonumq.message.JonuMQWireMessage;
+import com.jonu.jonumq.transport.TransportFactory;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
+import javax.jms.*;
 
 /**
  * @author prabhato
@@ -17,7 +18,18 @@ import javax.jms.MessageListener;
  */
 public class JonuMQConsumer implements MessageConsumer
 {
-    JonuMQListener listener = null;
+    private JonuMQListener listener = null;
+    private JonuMQWireMessage wireMessage;
+    private TransportFactory transportFactory;
+    private Destination destination;
+
+
+    public JonuMQConsumer(JonuMQWireMessage wireMessage, TransportFactory transportFactory, Destination destination)
+    {
+        this.wireMessage = wireMessage;
+        this.transportFactory = transportFactory;
+        this.destination = destination;
+    }
 
     @Override
     public String getMessageSelector() throws JMSException
@@ -38,6 +50,24 @@ public class JonuMQConsumer implements MessageConsumer
     public void setMessageListener(MessageListener listener) throws JMSException
     {
         this.listener = new JonuMQListener(listener);
+        try {
+            startConsumption();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startConsumption() throws ClassNotFoundException
+    {
+
+        while (true) {
+            JonuMQMessageWrapper messageWrapper = transportFactory.readNextMessage();
+            if (messageWrapper != null) {
+                JonuMQMessage message = messageWrapper.getMessage();
+                listener.onMessage(message);
+            }
+        }
+
     }
 
     @Override
