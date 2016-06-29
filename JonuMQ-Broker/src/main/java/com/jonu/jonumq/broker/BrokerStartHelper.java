@@ -13,7 +13,6 @@ public class BrokerStartHelper extends Thread
     public static void main(String[] args) throws Exception
     {
         try {
-
             JonuMQBroker.igniteBroker("localhost", 2056);
             JonuMQBroker.start();
         } finally {

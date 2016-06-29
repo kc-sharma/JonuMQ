@@ -128,8 +128,8 @@ public class TransportFactory
             }
             // when we send same object even after modifying the underline variable, ObjectOutStream will send same old object
             // In our case wireMessage is same object we are setting only the message
-            // Resolution : create a dummy new JonuMQWireMessage Object
-            out.writeObject(getDummyWireMessage(wireMessage));
+            // Resolution : use Unshared write instead of writeObject
+            out.writeUnshared(wireMessage);
         } catch (ConnectionResetException ex) {
             closeOutStream();
             retrySend();
@@ -139,16 +139,6 @@ public class TransportFactory
             retrySend();
             send(wireMessage);
         }
-    }
-
-    private Object getDummyWireMessage(JonuMQWireMessage wireMessage)
-    {
-        JonuMQWireMessage message = new JonuMQWireMessage();
-        message.setDestinationType(wireMessage.getDestinationType());
-        message.setDestination(wireMessage.getDestination());
-        message.setClientType(wireMessage.getClientType());
-        message.setMessage(wireMessage.getMessage());
-        return message;
     }
 
     private void retrySend() throws JMSException
