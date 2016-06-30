@@ -3,8 +3,8 @@
  */
 package com.jonu.jonumq.consumer;
 
-import com.jonu.jonumq.message.JonuMQMessageWrapper;
 import com.jonu.jonumq.channel.Channel;
+import com.jonu.jonumq.message.JonuMQMessageWrapper;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -20,23 +20,34 @@ public class QueueConsumer extends Consumer
     public void
     doProcess(Channel channel) throws IOException
     {
-        for (JonuMQMessageWrapper message = channel.getFirstMessage(); message != null;
-             message = channel.getFirstMessage()) {
-
-            message.setMessageOutTime(System.currentTimeMillis());
-
-            for (ObjectOutputStream out : channel.getConsumerList()) {
+        while (true) {
+            JonuMQMessageWrapper message = null;
+            try {
+                message = channel.getFirstMessage();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
                 try {
-                    super.dispatchMessage(out, message);
-                    message.setConsumed(true);
-                } catch (IOException ex) {
-                    // If consumer is disconnected we can remove the consumer OUTPUT stream from the list
-                    channel.removeOutStream(out);
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();  //$REVIEW$ To change body of catch statement use File | Settings | File Templates.
                 }
-                break;
             }
+            if (message != null) {
+                message.setMessageOutTime(System.currentTimeMillis());
 
-            super.persistMessage(message);
+                for (ObjectOutputStream out : channel.getConsumerList()) {
+                    try {
+                        super.dispatchMessage(out, message);
+                        message.setConsumed(true);
+                    } catch (IOException ex) {
+                        // If consumer is disconnected we can remove the consumer OUTPUT stream from the list
+                        channel.removeOutStream(out);
+                    }
+                    break;
+                }
+
+                super.persistMessage(message);
+            }
         }
     }
 }

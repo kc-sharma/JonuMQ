@@ -28,19 +28,13 @@ public class MessageConsumption extends Thread
         // if this channel has new message
         // if channel is queue or topic
         // if consumer is durable or not
+        Consumer consumer = ConsumerResolver.resolve(channel);
         while (channel.isRunning()) {
             try {
-                if (checkIfNewMessageArrived()) {
-                    Consumer consumer = ConsumerResolver.resolve(channel);
-                    try {
-                        consumer.doProcess(channel);
-                    } catch (IOException e) {
-                        System.out.println("Couldn't send the message to the client");
-                        e.printStackTrace();
-                    }
-                }
-            } catch (InterruptedException e) {
-                // Ignore
+                consumer.doProcess(channel);
+            } catch (IOException e) {
+                System.out.println("Couldn't send the message to the client");
+                e.printStackTrace();
             }
         }
     }

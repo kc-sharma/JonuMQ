@@ -5,6 +5,7 @@ import com.jonu.jonumq.message.JonuMQMessageWrapper;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,27 +17,18 @@ import java.util.logging.Logger;
 public class Channel
 {
     private final Logger logger = Logger.getLogger(Channel.class.getName());
-    private volatile List<JonuMQMessageWrapper> listOfMessages;
+    LinkedBlockingQueue<JonuMQMessageWrapper> list = new LinkedBlockingQueue<JonuMQMessageWrapper>();
+
+    private volatile LinkedBlockingQueue<JonuMQMessageWrapper> listOfMessages;
     private volatile List<ObjectOutputStream> consumerList;
-    private volatile int messageCount;
     private volatile ChannelType channelType = null;
     private volatile boolean running = true;
     private final int MAX_MESSAGES = Integer.MAX_VALUE;
 
     public Channel()
     {
-        this.listOfMessages = new ArrayList<JonuMQMessageWrapper>();
+        this.listOfMessages = new LinkedBlockingQueue<JonuMQMessageWrapper>(MAX_MESSAGES);
         this.consumerList = new ArrayList<ObjectOutputStream>();
-    }
-
-    public List<JonuMQMessageWrapper> getListOfMessages()
-    {
-        return listOfMessages;
-    }
-
-    public void setListOfMessages(List<JonuMQMessageWrapper> listOfMessages)
-    {
-        this.listOfMessages = listOfMessages;
     }
 
     public void addMessage(JonuMQMessageWrapper jonuMQMessageWrapper)
@@ -46,26 +38,29 @@ public class Channel
         }
 
         haltIfReachedMaxMessage();
-        this.listOfMessages.add(jonuMQMessageWrapper);
-        messageCount++;
+
+        // if queue reach max size this method will return False
+        this.listOfMessages.offer(jonuMQMessageWrapper);
     }
 
     private void haltIfReachedMaxMessage()
     {
-        if (messageCount >= MAX_MESSAGES) {
+        if (listOfMessages.size() >= MAX_MESSAGES) {
             logger.log(Level.INFO, "Buffer message queue is full halting producer for a while to send message");
-            while (messageCount > MAX_MESSAGES - 10) ;
+            while (listOfMessages.size() > MAX_MESSAGES - 10) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    public JonuMQMessageWrapper getFirstMessage()
+    public JonuMQMessageWrapper getFirstMessage() throws InterruptedException
     {
-        if (!listOfMessages.isEmpty()) {
-            messageCount--;
-            return listOfMessages.remove(0);
-        }
-
-        return null;
+        // this method block the queue until there is some data in queue
+        return listOfMessages.take();
     }
 
     public void addConsumer(ObjectOutputStream out)
@@ -95,12 +90,7 @@ public class Channel
 
     public int getMessageCount()
     {
-        return messageCount;
-    }
-
-    public void setMessageCount(int messageCount)
-    {
-        this.messageCount = messageCount;
+        return listOfMessages.size();
     }
 
     public List<ObjectOutputStream> getConsumerList()

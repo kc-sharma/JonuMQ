@@ -161,8 +161,13 @@ public class JonuMQSession implements Session
         wireMessage.setClientType(ClientType.CONSUMER);
         wireMessage.setDestination(((JonuMQDestination) destination).getDestinationName());
 
-        transportFactory.send(wireMessage);
+        registerConsumer();
         return new JonuMQConsumer(wireMessage, transportFactory, destination);
+    }
+
+    private void registerConsumer() throws JMSException
+    {
+        transportFactory.send(wireMessage);
     }
 
     @Override

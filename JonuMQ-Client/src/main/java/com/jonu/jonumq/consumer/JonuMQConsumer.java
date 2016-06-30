@@ -19,14 +19,14 @@ import javax.jms.*;
 public class JonuMQConsumer implements MessageConsumer
 {
     private JonuMQListener listener = null;
-    private JonuMQWireMessage wireMessage;
+    final private JonuMQWireMessage consumerRegisteringMessage;
     private TransportFactory transportFactory;
     private Destination destination;
 
-
-    public JonuMQConsumer(JonuMQWireMessage wireMessage, TransportFactory transportFactory, Destination destination)
+    public JonuMQConsumer(final JonuMQWireMessage wireMessage, TransportFactory transportFactory, Destination destination)
     {
-        this.wireMessage = wireMessage;
+
+        this.consumerRegisteringMessage = wireMessage;
         this.transportFactory = transportFactory;
         this.destination = destination;
     }
@@ -57,17 +57,22 @@ public class JonuMQConsumer implements MessageConsumer
         }
     }
 
-    private void startConsumption() throws ClassNotFoundException
+    private void startConsumption() throws ClassNotFoundException, JMSException
     {
 
         while (true) {
-            JonuMQMessageWrapper messageWrapper = transportFactory.readNextMessage();
+
+            JonuMQMessageWrapper messageWrapper = transportFactory.readNextMessage(consumerRegisteringMessage);
             if (messageWrapper != null) {
                 JonuMQMessage message = messageWrapper.getMessage();
                 listener.onMessage(message);
             }
         }
+    }
 
+    private void reRegisterConsumer() throws JMSException
+    {
+        transportFactory.send(consumerRegisteringMessage);
     }
 
     @Override

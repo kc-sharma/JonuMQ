@@ -194,7 +194,7 @@ public class TransportFactory
         }
     }
 
-    public JonuMQMessageWrapper readNextMessage() throws ClassNotFoundException
+    public JonuMQMessageWrapper readNextMessage(JonuMQWireMessage consumerRegisteringMessage) throws ClassNotFoundException, JMSException
     {
         if (in == null) {
             getInPutStream();
@@ -204,21 +204,24 @@ public class TransportFactory
         try {
             message = (JonuMQMessageWrapper) in.readObject();
         } catch (ConnectException e) {
-            retryReceive();
+            retryReceive(consumerRegisteringMessage);
         } catch (ConnectionResetException e) {
-            retryReceive();
+            retryReceive(consumerRegisteringMessage);
         } catch (IOException e) {
             e.printStackTrace();
-            retryReceive();
+            retryReceive(consumerRegisteringMessage);
         }
         return message;
 
     }
 
-    private void retryReceive()
+    private void retryReceive(JonuMQWireMessage consumerRegisteringMessage) throws JMSException
     {
         closeInStream();
         startClient();
+        
+        // register the consumer again
+        send(consumerRegisteringMessage);
         createInPutStream();
     }
 }

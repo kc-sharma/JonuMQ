@@ -30,7 +30,9 @@ public class MyMessageListener implements MessageListener
                 if (actual != received) {
                     System.out.println("Messages out of sync Actual: " + actual + "  but received: " + received);
                 }
-                System.out.println(received);
+                if (received % 100000 == 0)
+                    System.out.println(received);
+                //System.out.println(received);
             } catch (JMSException e) {
                 e.printStackTrace();
             }

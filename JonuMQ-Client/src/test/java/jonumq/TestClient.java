@@ -7,7 +7,6 @@ import com.jonu.jonumq.transport.JonuMQConnectionFactory;
 import org.junit.Test;
 
 import javax.jms.*;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author prabhato
@@ -16,8 +15,6 @@ import java.util.concurrent.CountDownLatch;
  */
 public class TestClient
 {
-    private CountDownLatch latch = new CountDownLatch(1);
-
     @Test
     public void TestReceiveMessageQueue()
     {
@@ -38,7 +35,6 @@ public class TestClient
             MessageConsumer consumer = session.createConsumer(destination);
             MyMessageListener listener = new MyMessageListener();
             consumer.setMessageListener(listener);
-            latch.await();
             // Clean up
             session.close();
             connection.close();
@@ -74,9 +70,12 @@ public class TestClient
             // Tell the producer to send the message
             int i = 1;
             while (true) {
-                System.out.println(i);
-                TextMessage message = session.createTextMessage(text + i++);
+                TextMessage message = session.createTextMessage(text + i);
                 producer.send(message);
+                if (i % 100000 == 0)
+                    System.out.println(i);
+                Thread.sleep(1);
+                i++;
             }
 
             // Clean up
