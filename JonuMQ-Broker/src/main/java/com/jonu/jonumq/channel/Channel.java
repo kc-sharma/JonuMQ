@@ -20,6 +20,7 @@ public class Channel
     LinkedBlockingQueue<JonuMQMessageWrapper> list = new LinkedBlockingQueue<JonuMQMessageWrapper>();
 
     private volatile LinkedBlockingQueue<JonuMQMessageWrapper> listOfMessages;
+    private volatile LinkedBlockingQueue<JonuMQMessageWrapper> listOfPersistMessage;
     private volatile List<ObjectOutputStream> consumerList;
     private volatile ChannelType channelType = null;
     private volatile boolean running = true;
@@ -28,6 +29,7 @@ public class Channel
     public Channel()
     {
         this.listOfMessages = new LinkedBlockingQueue<JonuMQMessageWrapper>(MAX_MESSAGES);
+        this.listOfPersistMessage = new LinkedBlockingQueue<JonuMQMessageWrapper>(MAX_MESSAGES);
         this.consumerList = new ArrayList<ObjectOutputStream>();
     }
 

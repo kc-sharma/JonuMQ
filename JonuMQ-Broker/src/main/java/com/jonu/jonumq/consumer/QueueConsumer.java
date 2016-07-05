@@ -21,19 +21,8 @@ public class QueueConsumer extends Consumer
     doProcess(Channel channel) throws IOException
     {
         while (true) {
-            JonuMQMessageWrapper message = null;
-            try {
-                message = channel.getFirstMessage();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();  //$REVIEW$ To change body of catch statement use File | Settings | File Templates.
-                }
-            }
+            JonuMQMessageWrapper message = super.getFirstMessage(channel);
             if (message != null) {
-                message.setMessageOutTime(System.currentTimeMillis());
 
                 for (ObjectOutputStream out : channel.getConsumerList()) {
                     try {
@@ -45,7 +34,7 @@ public class QueueConsumer extends Consumer
                     }
                     break;
                 }
-
+                // Persist the message if not consumed
                 super.persistMessage(message);
             }
         }

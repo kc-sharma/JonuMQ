@@ -13,7 +13,7 @@ import javax.jms.*;
  * @version $Revision$, $Date$, $Author$
  * @since 6/13/2016
  */
-public class TestClient
+public class TestClientForQueue
 {
     @Test
     public void TestReceiveMessageQueue()
@@ -72,8 +72,9 @@ public class TestClient
             while (true) {
                 TextMessage message = session.createTextMessage(text + i);
                 producer.send(message);
-                if (i % 100000 == 0)
+                if (i % 100000 == 0) {
                     System.out.println(i);
+                }
                 Thread.sleep(1);
                 i++;
             }

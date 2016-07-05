@@ -212,7 +212,9 @@ public class JonuMQSession implements Session
     @Override
     public Topic createTopic(String s) throws JMSException
     {
-        return null;  //$REVIEW$ To change body of implemented methods use File | Settings | File Templates.
+        wireMessage.setDestinationType(DestinationType.TOPIC);
+        validateQueueName(s);
+        return new JonuMQTopic(s);
     }
 
     @Override
