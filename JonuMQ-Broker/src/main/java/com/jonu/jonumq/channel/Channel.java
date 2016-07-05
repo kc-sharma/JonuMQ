@@ -109,4 +109,9 @@ public class Channel
     {
         consumerList.remove(out);
     }
+
+    public void removeAllOutStream(List<ObjectOutputStream> needToRemove)
+    {
+        consumerList.removeAll(needToRemove);
+    }
 }

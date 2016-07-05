@@ -29,7 +29,7 @@ public class TestClientForQueue
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // Create the destination (Topic or Queue)
-            Destination destination = session.createQueue("TEST.FOO");
+            Destination destination = session.createQueue("TEST.FOO1");
 
             // Create a MessageProducer from the Session to the Topic or Queue
             MessageConsumer consumer = session.createConsumer(destination);
@@ -57,7 +57,7 @@ public class TestClientForQueue
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // Create the destination (Topic or Queue)
-            Destination destination = session.createQueue("TEST.FOO");
+            Destination destination = session.createQueue("TEST.FOO1");
 
             // Create a MessageProducer from the Session to the Topic or Queue
             MessageProducer producer = session.createProducer(destination);
@@ -72,9 +72,9 @@ public class TestClientForQueue
             while (true) {
                 TextMessage message = session.createTextMessage(text + i);
                 producer.send(message);
-                if (i % 100000 == 0) {
+                //if (i % 100000 == 0) {
                     System.out.println(i);
-                }
+                //}
                 Thread.sleep(1);
                 i++;
             }
