@@ -8,7 +8,7 @@ import com.jonu.jonumq.client.ClientTypeHandler;
 import com.jonu.jonumq.client.ClientTypeResolver;
 import com.jonu.jonumq.exception.BrokerStoppedException;
 import com.jonu.jonumq.message.JonuMQWireMessage;
-import sun.net.ConnectionResetException;
+import java.net.SocketException;
 
 import java.io.*;
 import java.net.Socket;
@@ -79,10 +79,7 @@ public class ClientHandler extends Thread
                         client = ClientTypeResolver.resolve(wireMessage);
                         client.doProcess(wireMessage, out, executor);
                     }
-                } catch (ConnectionResetException cre) {
-                    logger.log(Level.INFO, "Client got disconnected");
-                    break;
-                } catch (SocketException ex) {
+                } catch (SocketException cre) {
                     logger.log(Level.INFO, "Client got disconnected");
                     break;
                 } catch (IOException e) {

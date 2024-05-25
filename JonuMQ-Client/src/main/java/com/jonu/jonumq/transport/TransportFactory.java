@@ -5,7 +5,7 @@ package com.jonu.jonumq.transport;
 
 import com.jonu.jonumq.message.JonuMQMessageWrapper;
 import com.jonu.jonumq.message.JonuMQWireMessage;
-import sun.net.ConnectionResetException;
+import java.net.SocketException;
 
 import javax.jms.JMSException;
 import java.io.*;
@@ -130,7 +130,7 @@ public class TransportFactory
             // In our case wireMessage is same object we are setting only the message
             // Resolution : use Unshared write instead of writeObject
             out.writeUnshared(wireMessage);
-        } catch (ConnectionResetException ex) {
+        } catch (SocketException ex) {
             closeOutStream();
             retrySend();
             send(wireMessage);
@@ -205,7 +205,7 @@ public class TransportFactory
             message = (JonuMQMessageWrapper) in.readObject();
         } catch (ConnectException e) {
             retryReceive(consumerRegisteringMessage);
-        } catch (ConnectionResetException e) {
+        } catch (SocketException e) {
             retryReceive(consumerRegisteringMessage);
         } catch (IOException e) {
             e.printStackTrace();
